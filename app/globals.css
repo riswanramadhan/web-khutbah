@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #3c3c3c;
+  --background: #fbf7ef;
+  --foreground: #25231f;
   color-scheme: light;
 }
 
@@ -20,7 +20,15 @@
   --color-duo-surface: #f7f7f7;
   --color-duo-surface-2: #ebebeb;
   --color-duo-border: #e5e5e5;
+  --color-paper: #fbf7ef;
+  --color-ink-deep: #25231f;
+  --color-mint-soft: #e7f8cf;
+  --color-sky-soft: #dcf2ff;
+  --color-sun-soft: #fff0a8;
+  --color-rose-soft: #ffe3dc;
   --font-sans: var(--font-nunito);
+  --font-display: var(--font-display);
+  --font-accent: var(--font-accent);
 }
 
 body {
@@ -46,6 +54,86 @@ select {
 
 button {
   color: inherit;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.font-accent {
+  font-family: var(--font-accent), var(--font-nunito), system-ui, sans-serif;
+}
+
+.word-chip {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.08em 0.34em 0.12em;
+  margin: 0.03em 0.04em;
+  background: #fff0a8;
+  box-shadow: inset 0 -0.28em 0 #ffd966;
+}
+
+.word-chip:nth-child(3n + 1) {
+  background: #dcf2ff;
+  box-shadow: inset 0 -0.28em 0 #a7ddff;
+}
+
+.word-chip:nth-child(3n + 2) {
+  background: #e7f8cf;
+  box-shadow: inset 0 -0.28em 0 #bde983;
+}
+
+.word-chip:nth-child(3n + 3) {
+  background: #ffe3dc;
+  box-shadow: inset 0 -0.28em 0 #ffb9a6;
+}
+
+.depth-slider {
+  width: 100%;
+  height: 3.5rem;
+  cursor: grab;
+  appearance: none;
+  background: transparent;
+}
+
+.depth-slider:active {
+  cursor: grabbing;
+}
+
+.depth-slider::-webkit-slider-runnable-track {
+  height: 0.7rem;
+  border: 2px solid #25231f;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #58cc02, #ffc800, #1cb0f6);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.55), 0 3px 0 #25231f;
+}
+
+.depth-slider::-webkit-slider-thumb {
+  width: 3rem;
+  height: 3rem;
+  margin-top: -1.28rem;
+  appearance: none;
+  border: 4px solid #25231f;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ffffff 0 18%, #ffc800 19% 58%, #ff8f3d 59% 100%);
+  box-shadow: 0 5px 0 #25231f;
+}
+
+.depth-slider::-moz-range-track {
+  height: 0.7rem;
+  border: 2px solid #25231f;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #58cc02, #ffc800, #1cb0f6);
+  box-shadow: inset 0 2px 0 rgb(255 255 255 / 0.55), 0 3px 0 #25231f;
+}
+
+.depth-slider::-moz-range-thumb {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid #25231f;
+  border-radius: 999px;
+  background: #ffc800;
+  box-shadow: 0 5px 0 #25231f;
 }
 
 ::placeholder {

@@ -19,20 +19,20 @@ export function Navbar() {
   });
 
   return (
-    <header className="sticky top-0 z-20 w-full border-b-2 border-duo-border bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-20 w-full border-b-2 border-ink-deep bg-white/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4 lg:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-          <div className="shrink-0 rounded-2xl bg-duo-green px-3 py-2 text-sm font-extrabold text-white shadow-[0_3px_0_#58A700]">
+          <div className="shrink-0 rounded-2xl border-2 border-ink-deep bg-duo-green px-3 py-2 font-display text-sm font-black text-white shadow-[0_3px_0_#25231f]">
             KhutbahKit
           </div>
           {badge && (
-            <span className="hidden items-center gap-1 rounded-full bg-duo-purple px-3 py-1 text-xs font-bold text-white sm:flex">
+            <span className="hidden items-center gap-1 rounded-full border-2 border-ink-deep bg-rose-soft px-3 py-1 font-accent text-xs font-extrabold text-ink-deep sm:flex">
               <Sparkles className="h-3 w-3" />
               {badge}
             </span>
           )}
         </div>
-        <div className="flex shrink-0 items-center gap-2 rounded-full border-2 border-duo-border bg-duo-surface px-3 py-1 text-xs font-bold text-duo-ink">
+        <div className="flex shrink-0 items-center gap-2 rounded-full border-2 border-ink-deep bg-sun-soft px-3 py-1 font-accent text-xs font-extrabold text-duo-ink">
           <Flame className="h-4 w-4 text-duo-yellow" />
           <span className="whitespace-nowrap">{streak} khutbah hari ini</span>
         </div>

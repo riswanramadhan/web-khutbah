@@ -62,8 +62,13 @@ const audiensOptions = [
 
 const bahasaOptions = ["Bahasa Indonesia", "Bahasa Bugis", "Bahasa Jawa"];
 const durasiOptions = [5, 10, 15, 20, 30, 45, 60];
-const strukturOptions = ["Standard", "Lengkap", "Custom"] as const;
+const strukturOptions = ["Standard", "Lengkap"] as const;
 const kedalamanOptions = ["Basic", "Intermediate", "Advanced"] as const;
+const kedalamanCopy = {
+  Basic: "Ringkas, ringan, cocok untuk khutbah pendek.",
+  Intermediate: "Lebih kontekstual dengan alur argumen jelas.",
+  Advanced: "Mendalam, bernuansa ilmiah, dan kaya penguatan dalil."
+} satisfies Record<(typeof kedalamanOptions)[number], string>;
 
 type FormState = {
   namaPenceramah: string;
@@ -88,6 +93,18 @@ type HistoryItem = {
   payload: FormState;
   result: GeminiOutput;
 };
+
+function HighlightLabel({ text }: { text: string }) {
+  return (
+    <span className="font-accent text-sm font-extrabold text-ink-deep">
+      {text.split(" ").map((word, index) => (
+        <span key={`${word}-${index}`} className="word-chip">
+          {word}
+        </span>
+      ))}
+    </span>
+  );
+}
 
 const initialState: FormState = {
   namaPenceramah: "",
@@ -212,8 +229,8 @@ export function KhutbahForm() {
       });
 
       if (!response.ok) {
-        const errorPayload = (await response.json()) as { error?: string };
-        throw new Error(errorPayload.error || "Gagal memproses permintaan");
+        const errorPayload = (await response.json()) as { error?: string; detail?: string };
+        throw new Error(errorPayload.detail || errorPayload.error || "Gagal memproses permintaan");
       }
 
       const payload = (await response.json()) as { data: GeminiOutput };
@@ -249,35 +266,35 @@ export function KhutbahForm() {
   return (
     <div id="khutbah-form" className="space-y-8">
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="rounded-2xl border-2 border-duo-border bg-white p-4 shadow-[0_2px_0_#E5E5E5] sm:p-6">
+        <div className="rounded-[1.75rem] border-2 border-ink-deep bg-white p-4 shadow-[0_6px_0_#25231f] sm:p-6">
           <div className="grid gap-6 md:grid-cols-2">
-            <div id="field-nama" className={cn(shakeField === "namaPenceramah" && "animate-shake")}>
-              <label className="text-sm font-bold text-duo-ink">Nama Penceramah</label>
+            <div id="field-namaPenceramah" className={cn(shakeField === "namaPenceramah" && "animate-shake")}>
+              <label><HighlightLabel text="Nama Penceramah" /></label>
               <input
                 type="text"
                 value={form.namaPenceramah}
                 onChange={(event) => updateForm("namaPenceramah", event.target.value)}
                 placeholder="Ust. Muhammad Syahrul, Lc."
                 className={cn(
-                  "mt-2 w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm",
+                  "mt-3 w-full rounded-2xl border-2 border-ink-deep bg-white px-4 py-3 font-accent text-base font-bold text-duo-ink placeholder:text-duo-muted shadow-[0_3px_0_#25231f] focus:bg-sky-soft focus:outline-none sm:text-sm",
                   errors.namaPenceramah && "border-duo-red"
                 )}
               />
             </div>
             <div>
-              <label className="text-sm font-bold text-duo-ink">Tempat / Nama Acara</label>
+              <label><HighlightLabel text="Tempat Nama Acara" /></label>
               <input
                 type="text"
                 value={form.tempat}
                 onChange={(event) => updateForm("tempat", event.target.value)}
                 placeholder="Masjid Al-Ikhlas Makassar / Pernikahan Bapak Haji Ahmad"
-                className="mt-2 w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm"
+                className="mt-3 w-full rounded-2xl border-2 border-ink-deep bg-white px-4 py-3 font-accent text-base font-bold text-duo-ink placeholder:text-duo-muted shadow-[0_3px_0_#25231f] focus:bg-sky-soft focus:outline-none sm:text-sm"
               />
             </div>
           </div>
 
           <div id="field-jenisAcara" className={cn("mt-6", shakeField === "jenisAcara" && "animate-shake")}>
-            <label className="text-sm font-bold text-duo-ink">Jenis Acara</label>
+            <label><HighlightLabel text="Jenis Acara" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
               {jenisAcaraOptions.map((option) => {
                 const isSelected = form.jenisAcara === option;
@@ -287,10 +304,10 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => updateForm("jenisAcara", option)}
                     className={cn(
-                      "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:text-xs",
+                      "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 text-left font-accent text-sm font-extrabold leading-snug shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
-                        ? "border-duo-green bg-duo-green text-white"
-                        : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
+                        ? "bg-duo-green text-white"
+                        : "bg-white text-duo-ink hover:bg-sky-soft",
                       errors.jenisAcara && "border-duo-red"
                     )}
                   >
@@ -302,7 +319,7 @@ export function KhutbahForm() {
           </div>
 
           <div id="field-tema" className={cn("mt-6", shakeField === "tema" && "animate-shake")}>
-            <label className="text-sm font-bold text-duo-ink">Tema / Judul Kajian</label>
+            <label><HighlightLabel text="Tema Judul Kajian" /></label>
             <div className="mt-3">
               <ThemeSelector
                 jenisAcara={form.jenisAcara}
@@ -314,7 +331,7 @@ export function KhutbahForm() {
           </div>
 
           <div id="field-durasi" className={cn("mt-6", shakeField === "durasi" && "animate-shake")}>
-            <label className="text-sm font-bold text-duo-ink">Durasi Ceramah</label>
+            <label><HighlightLabel text="Durasi Ceramah" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
               {durasiOptions.map((minutes) => {
                 const isSelected = form.durasi === minutes;
@@ -324,10 +341,10 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => updateForm("durasi", minutes)}
                     className={cn(
-                      "min-h-10 rounded-full border-2 px-3 py-2 text-sm font-extrabold transition sm:min-h-0 sm:text-xs",
+                      "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 font-accent text-sm font-extrabold shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
-                        ? "border-duo-blue bg-duo-blue text-white"
-                        : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
+                        ? "bg-duo-blue text-white"
+                        : "bg-white text-duo-ink hover:bg-sky-soft",
                       errors.durasi && "border-duo-red"
                     )}
                   >
@@ -336,13 +353,13 @@ export function KhutbahForm() {
                 );
               })}
             </div>
-            <p className="mt-2 text-xs font-bold text-duo-muted">
+            <p className="mt-3 font-accent text-xs font-bold text-duo-muted">
               Estimasi jumlah kata: {wordEstimate ? `~${wordEstimate} kata` : "-"}
             </p>
           </div>
 
           <div id="field-gayaBahasa" className={cn("mt-6", shakeField === "gayaBahasa" && "animate-shake")}>
-            <label className="text-sm font-bold text-duo-ink">Gaya Bahasa</label>
+            <label><HighlightLabel text="Gaya Bahasa" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
               {gayaBahasaOptions.map((option) => {
                 const isSelected = form.gayaBahasa.includes(option);
@@ -352,10 +369,10 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => toggleMulti("gayaBahasa", option)}
                     className={cn(
-                      "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:text-xs",
+                      "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 text-left font-accent text-sm font-extrabold leading-snug shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
-                        ? "border-duo-green bg-duo-green text-white"
-                        : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
+                        ? "bg-duo-green text-white"
+                        : "bg-white text-duo-ink hover:bg-mint-soft",
                       errors.gayaBahasa && "border-duo-red"
                     )}
                   >
@@ -368,7 +385,7 @@ export function KhutbahForm() {
           </div>
 
           <div id="field-audiens" className={cn("mt-6", shakeField === "audiens" && "animate-shake")}>
-            <label className="text-sm font-bold text-duo-ink">Target Audiens</label>
+            <label><HighlightLabel text="Target Audiens" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
               {audiensOptions.map((option) => {
                 const isSelected = form.audiens.includes(option);
@@ -378,10 +395,10 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => toggleMulti("audiens", option)}
                     className={cn(
-                      "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:text-xs",
+                      "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 text-left font-accent text-sm font-extrabold leading-snug shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
-                        ? "border-duo-blue bg-duo-blue text-white"
-                        : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
+                        ? "bg-duo-blue text-white"
+                        : "bg-white text-duo-ink hover:bg-sky-soft",
                       errors.audiens && "border-duo-red"
                     )}
                   >
@@ -394,7 +411,7 @@ export function KhutbahForm() {
           </div>
 
           <div id="field-bahasa" className={cn("mt-6", shakeField === "bahasa" && "animate-shake")}>
-            <label className="text-sm font-bold text-duo-ink">Pilihan Bahasa</label>
+            <label><HighlightLabel text="Pilihan Bahasa" /></label>
             <div className="mt-3 grid gap-3 md:grid-cols-3">
               {bahasaOptions.map((option) => {
                 const isSelected = form.bahasa.includes(option);
@@ -402,10 +419,10 @@ export function KhutbahForm() {
                   <label
                     key={option}
                     className={cn(
-                      "flex items-center justify-between gap-3 rounded-xl border-2 px-4 py-3 text-sm font-extrabold leading-snug",
+                      "flex items-center justify-between gap-3 rounded-2xl border-2 border-ink-deep px-4 py-3 font-accent text-sm font-extrabold leading-snug shadow-[0_3px_0_#25231f]",
                       isSelected
-                        ? "border-duo-purple bg-duo-purple/10 text-duo-ink"
-                        : "border-duo-border bg-white text-duo-ink",
+                        ? "bg-rose-soft text-duo-ink"
+                        : "bg-white text-duo-ink",
                       errors.bahasa && "border-duo-red"
                     )}
                   >
@@ -420,16 +437,16 @@ export function KhutbahForm() {
                 );
               })}
             </div>
-            <p className="mt-2 text-xs font-bold text-duo-muted">
+            <p className="mt-3 font-accent text-xs font-bold text-duo-muted">
               Mix bahasa akan membuat ceramah lebih dekat dengan jamaah lokal.
             </p>
           </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-2">
             <div>
-              <label className="text-sm font-bold text-duo-ink">Ayat & Hadits Otomatis</label>
-              <div className="mt-3 space-y-2">
-                <label className="flex items-start gap-3 text-sm font-bold leading-6 text-duo-ink">
+              <label><HighlightLabel text="Ayat Hadits Otomatis" /></label>
+              <div className="mt-3 space-y-3 rounded-2xl border-2 border-ink-deep bg-mint-soft p-4 shadow-[0_3px_0_#25231f]">
+                <label className="flex items-start gap-3 font-accent text-sm font-bold leading-6 text-duo-ink">
                   <input
                     type="checkbox"
                     checked={form.includeAyat}
@@ -438,7 +455,7 @@ export function KhutbahForm() {
                   />
                   Sertakan ayat Al-Quran yang relevan
                 </label>
-                <label className="flex items-start gap-3 text-sm font-bold leading-6 text-duo-ink">
+                <label className="flex items-start gap-3 font-accent text-sm font-bold leading-6 text-duo-ink">
                   <input
                     type="checkbox"
                     checked={form.includeHadits}
@@ -450,7 +467,7 @@ export function KhutbahForm() {
               </div>
             </div>
             <div>
-              <label className="text-sm font-bold text-duo-ink">Struktur Khutbah</label>
+              <label><HighlightLabel text="Struktur Khutbah" /></label>
               <div className="mt-3 flex flex-wrap gap-2">
                 {strukturOptions.map((option) => {
                   const isSelected = form.struktur === option;
@@ -460,10 +477,10 @@ export function KhutbahForm() {
                       type="button"
                       onClick={() => updateForm("struktur", option)}
                       className={cn(
-                        "min-h-10 rounded-full border-2 px-3 py-2 text-sm font-extrabold transition sm:min-h-0 sm:text-xs",
+                        "min-h-10 rounded-full border-2 border-ink-deep px-4 py-2 font-accent text-sm font-extrabold shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                         isSelected
-                          ? "border-duo-green bg-duo-green text-white"
-                          : "border-duo-border bg-white text-duo-ink hover:border-duo-blue"
+                          ? "bg-duo-green text-white"
+                          : "bg-white text-duo-ink hover:bg-mint-soft"
                       )}
                     >
                       {option}
@@ -475,42 +492,66 @@ export function KhutbahForm() {
           </div>
 
           <div className="mt-6">
-            <label className="text-sm font-bold text-duo-ink">Tingkat Kedalaman</label>
-            <div className="mt-3 flex items-center gap-3">
+            <label><HighlightLabel text="Tingkat Kedalaman" /></label>
+            <div className="mt-4 rounded-[1.5rem] border-2 border-ink-deep bg-sky-soft p-4 shadow-[0_4px_0_#25231f]">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="font-display text-3xl font-black leading-none text-ink-deep">
+                    {form.kedalaman}
+                  </div>
+                  <p className="mt-2 font-accent text-sm font-bold leading-6 text-duo-ink">
+                    {kedalamanCopy[form.kedalaman]}
+                  </p>
+                </div>
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-4 border-ink-deep bg-duo-yellow font-display text-2xl font-black text-ink-deep shadow-[0_5px_0_#25231f]">
+                  {kedalamanOptions.indexOf(form.kedalaman) + 1}
+                </div>
+              </div>
               <input
                 type="range"
                 min={0}
                 max={2}
+                step={1}
                 value={kedalamanOptions.indexOf(form.kedalaman)}
+                aria-label="Tingkat Kedalaman"
                 onChange={(event) => {
                   const index = Number(event.target.value);
                   updateForm("kedalaman", kedalamanOptions[index]);
                 }}
-                className="h-2 w-full cursor-pointer appearance-none rounded-full bg-duo-surface accent-duo-green"
+                className="depth-slider mt-5"
               />
-              <span className="rounded-full bg-duo-surface px-3 py-1 text-xs font-bold text-duo-ink">
-                {form.kedalaman}
-              </span>
+              <div className="grid grid-cols-3 gap-2 font-accent text-[0.7rem] font-extrabold uppercase text-ink-deep sm:text-xs">
+                {kedalamanOptions.map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => updateForm("kedalaman", option)}
+                    className={cn(
+                      "rounded-full border-2 border-ink-deep px-2 py-2 shadow-[0_2px_0_#25231f]",
+                      form.kedalaman === option ? "bg-duo-yellow" : "bg-white"
+                    )}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
             </div>
-            <p className="mt-2 text-xs font-bold text-duo-muted">
-              Basic cocok untuk ceramah singkat, Advanced untuk kajian ilmiah.
-            </p>
           </div>
 
           <div className="mt-6">
-            <label className="text-sm font-bold text-duo-ink">Catatan Tambahan (Optional)</label>
+            <label><HighlightLabel text="Catatan Tambahan" /></label>
             <textarea
               value={form.catatan}
               onChange={(event) => updateForm("catatan", event.target.value)}
               rows={4}
               placeholder="Contoh: Jamaah baru kehilangan orang tersayang, suasana penuh haru..."
-              className="mt-2 w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold leading-7 text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm"
+              className="mt-3 w-full rounded-2xl border-2 border-ink-deep bg-white px-4 py-3 font-accent text-base font-bold leading-7 text-duo-ink placeholder:text-duo-muted shadow-[0_3px_0_#25231f] focus:bg-sky-soft focus:outline-none sm:text-sm"
             />
           </div>
         </div>
 
         {errorMessage && (
-          <div className="rounded-xl border-2 border-duo-red bg-white px-4 py-3 text-sm font-bold text-duo-red">
+          <div className="rounded-2xl border-2 border-duo-red bg-rose-soft px-4 py-3 font-accent text-sm font-extrabold leading-6 text-duo-red shadow-[0_3px_0_#25231f]">
             {errorMessage}
           </div>
         )}
@@ -533,8 +574,8 @@ export function KhutbahForm() {
       )}
 
       {history.length > 0 && (
-        <div className="rounded-2xl border-2 border-duo-border bg-white p-4 shadow-[0_2px_0_#E5E5E5] sm:p-6">
-          <div className="flex items-center gap-2 text-sm font-extrabold text-duo-ink">
+        <div className="rounded-[1.75rem] border-2 border-ink-deep bg-white p-4 shadow-[0_6px_0_#25231f] sm:p-6">
+          <div className="flex items-center gap-2 font-accent text-sm font-extrabold text-duo-ink">
             <History className="h-4 w-4" />
             Riwayat 5 Khutbah Terakhir
           </div>
@@ -544,7 +585,7 @@ export function KhutbahForm() {
                 key={item.id}
                 type="button"
                 onClick={() => handleLoadHistory(item)}
-                className="flex w-full items-center justify-between gap-3 rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-left text-sm font-bold leading-6 text-duo-ink transition hover:border-duo-blue"
+                className="flex w-full items-center justify-between gap-3 rounded-2xl border-2 border-ink-deep bg-white px-4 py-3 text-left font-accent text-sm font-bold leading-6 text-duo-ink shadow-[0_2px_0_#25231f] transition hover:bg-sky-soft"
               >
                 <span className="min-w-0 flex-1 break-words">{item.title}</span>
                 <ChevronDown className="h-4 w-4 shrink-0 text-duo-muted" />

@@ -1,28 +1,54 @@
 import { KhutbahForm } from "@/components/KhutbahForm";
 
+function HighlightWords({ text, className = "" }: { text: string; className?: string }) {
+  return (
+    <span className={className}>
+      {text.split(" ").map((word, index) => (
+        <span key={`${word}-${index}`} className="word-chip">
+          {word}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function Page() {
   return (
     <div className="space-y-8 sm:space-y-12">
-      <section className="rounded-2xl border-2 border-duo-border bg-white p-5 shadow-[0_2px_0_#E5E5E5] sm:p-8">
-        <div className="grid gap-6 md:grid-cols-[1.25fr_0.75fr] md:items-center">
-          <div>
-            <h1 className="text-3xl font-extrabold leading-tight text-duo-ink sm:text-5xl">
-              Khutbah Berkualitas
-              <br />
-              dalam Hitungan Menit
-            </h1>
-            <p className="mt-4 max-w-xl text-base font-bold leading-7 text-duo-muted sm:text-lg">
-              Asisten AI untuk para Ustadz & Da&apos;i Nusantara - buat outline, naskah, dan referensi dalil secara cepat dan terpercaya.
-            </p>
-            <div className="mt-6">
-              <a href="#khutbah-form" className="inline-flex w-full items-center justify-center rounded-xl bg-duo-green px-6 py-4 text-center font-extrabold text-white shadow-[0_4px_0_#58A700] transition-transform active:translate-y-1 active:shadow-none sm:w-auto">Mulai Buat Khutbah -&gt;</a>
+      <section className="overflow-hidden rounded-[2rem] border-2 border-ink-deep bg-white shadow-[0_8px_0_#25231f]">
+        <div className="grid gap-0 md:grid-cols-[1.28fr_0.72fr] md:items-stretch">
+          <div className="p-5 sm:p-8 lg:p-10">
+            <div className="mb-5 inline-flex rounded-full border-2 border-ink-deep bg-mint-soft px-4 py-2 font-accent text-xs font-extrabold uppercase text-ink-deep shadow-[0_3px_0_#25231f]">
+              Asisten ceramah cepat, rapi, dan bernuansa lokal
             </div>
-            <div className="mt-6 text-sm font-bold text-duo-muted">1,234+ Khutbah Dibuat</div>
+            <h1 className="font-display text-4xl font-black leading-[0.95] text-ink-deep sm:text-6xl">
+              <HighlightWords text="Khutbah Berkualitas" />
+              <br />
+              <span className="mt-2 inline-block">dalam Hitungan Menit</span>
+            </h1>
+            <p className="mt-5 max-w-2xl font-accent text-base font-semibold leading-8 text-duo-ink sm:text-lg">
+              Buat outline, naskah, dalil, ringkasan, dan tips penyampaian tanpa rasa template murahan. Pilih konteksnya, lalu biarkan AI menyusun bahan yang siap dipoles.
+            </p>
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <a href="#khutbah-form" className="inline-flex w-full items-center justify-center rounded-2xl border-2 border-ink-deep bg-duo-green px-6 py-4 text-center font-accent font-extrabold text-white shadow-[0_5px_0_#25231f] transition-transform active:translate-y-1 active:shadow-none sm:w-auto">Mulai Buat Khutbah -&gt;</a>
+              <div className="rounded-full border-2 border-ink-deep bg-sun-soft px-4 py-2 font-accent text-sm font-extrabold text-ink-deep">
+                1,234+ khutbah dibuat
+              </div>
+            </div>
           </div>
-          <div className="flex items-center justify-center md:justify-end">
-            <div className="w-full rounded-2xl border-2 border-duo-border bg-duo-surface p-5 text-left sm:max-w-sm sm:p-6 sm:text-center">
-              <h3 className="text-lg font-extrabold text-duo-ink">Quick Start</h3>
-              <p className="mt-2 text-sm font-bold leading-6 text-duo-muted">Isi form di bawah untuk mulai membuat khutbah.</p>
+          <div className="border-t-2 border-ink-deep bg-[#123b2a] p-5 text-white md:border-l-2 md:border-t-0 sm:p-8">
+            <div className="flex h-full min-h-64 flex-col justify-between gap-8">
+              <div>
+                <p className="font-accent text-sm font-extrabold uppercase text-duo-yellow">Quick Start</p>
+                <h2 className="mt-3 font-display text-3xl font-black leading-tight">
+                  Fokus pada pesan, bukan form yang bikin pening.
+                </h2>
+              </div>
+              <div className="grid gap-3 font-accent text-sm font-bold leading-6">
+                <div className="rounded-2xl bg-white/10 p-4">1. Pilih acara, audiens, dan gaya bicara.</div>
+                <div className="rounded-2xl bg-white/10 p-4">2. Geser kedalaman sesuai kebutuhan kajian.</div>
+                <div className="rounded-2xl bg-white/10 p-4">3. Generate, evaluasi, lalu pakai hasilnya.</div>
+              </div>
             </div>
           </div>
         </div>

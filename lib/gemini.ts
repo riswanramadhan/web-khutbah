@@ -81,7 +81,7 @@ export async function callGemini(input: GeminiInput) {
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: process.env.GEMINI_MODEL || "gemini-3.5-flash",
     systemInstruction: SYSTEM_PROMPT,
     generationConfig: {
       responseMimeType: "application/json",

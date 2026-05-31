@@ -33,7 +33,10 @@ export async function POST(request: Request) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "GEMINI_API_KEY is missing" },
+      {
+        error: "GEMINI_API_KEY is missing",
+        detail: "GEMINI_API_KEY belum terbaca di server. Untuk Vercel, tambahkan Environment Variable GEMINI_API_KEY di Project Settings lalu redeploy."
+      },
       { status: 500 }
     );
   }
