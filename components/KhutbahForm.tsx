@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Check, ChevronDown, History } from "lucide-react";
 import { ThemeSelector } from "./ThemeSelector";
 import { LoadingScreen } from "./LoadingScreen";
@@ -112,14 +112,11 @@ export function KhutbahForm() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [result, setResult] = useState<GeminiOutput | null>(null);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
-
-  useEffect(() => {
+  const [history, setHistory] = useState<HistoryItem[]>(() => {
+    if (typeof window === "undefined") return [];
     const stored = localStorage.getItem("khutbahkit_history");
-    if (stored) {
-      setHistory(JSON.parse(stored) as HistoryItem[]);
-    }
-  }, []);
+    return stored ? (JSON.parse(stored) as HistoryItem[]) : [];
+  });
 
   const wordEstimate = useMemo(() => {
     return form.durasi ? estimateWordCount(form.durasi) : 0;
@@ -252,7 +249,7 @@ export function KhutbahForm() {
   return (
     <div id="khutbah-form" className="space-y-8">
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="rounded-2xl border-2 border-duo-border bg-white p-6 shadow-[0_2px_0_#E5E5E5]">
+        <div className="rounded-2xl border-2 border-duo-border bg-white p-4 shadow-[0_2px_0_#E5E5E5] sm:p-6">
           <div className="grid gap-6 md:grid-cols-2">
             <div id="field-nama" className={cn(shakeField === "namaPenceramah" && "animate-shake")}>
               <label className="text-sm font-bold text-duo-ink">Nama Penceramah</label>
@@ -262,7 +259,7 @@ export function KhutbahForm() {
                 onChange={(event) => updateForm("namaPenceramah", event.target.value)}
                 placeholder="Ust. Muhammad Syahrul, Lc."
                 className={cn(
-                  "mt-2 w-full rounded-xl border-2 border-duo-border px-4 py-3 text-sm font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none",
+                  "mt-2 w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm",
                   errors.namaPenceramah && "border-duo-red"
                 )}
               />
@@ -274,7 +271,7 @@ export function KhutbahForm() {
                 value={form.tempat}
                 onChange={(event) => updateForm("tempat", event.target.value)}
                 placeholder="Masjid Al-Ikhlas Makassar / Pernikahan Bapak Haji Ahmad"
-                className="mt-2 w-full rounded-xl border-2 border-duo-border px-4 py-3 text-sm font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none"
+                className="mt-2 w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm"
               />
             </div>
           </div>
@@ -290,7 +287,7 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => updateForm("jenisAcara", option)}
                     className={cn(
-                      "rounded-full border-2 px-3 py-2 text-xs font-bold transition",
+                      "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:text-xs",
                       isSelected
                         ? "border-duo-green bg-duo-green text-white"
                         : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
@@ -327,7 +324,7 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => updateForm("durasi", minutes)}
                     className={cn(
-                      "rounded-full border-2 px-3 py-2 text-xs font-bold transition",
+                      "min-h-10 rounded-full border-2 px-3 py-2 text-sm font-extrabold transition sm:min-h-0 sm:text-xs",
                       isSelected
                         ? "border-duo-blue bg-duo-blue text-white"
                         : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
@@ -355,7 +352,7 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => toggleMulti("gayaBahasa", option)}
                     className={cn(
-                      "rounded-full border-2 px-3 py-2 text-xs font-bold transition",
+                      "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:text-xs",
                       isSelected
                         ? "border-duo-green bg-duo-green text-white"
                         : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
@@ -381,7 +378,7 @@ export function KhutbahForm() {
                     type="button"
                     onClick={() => toggleMulti("audiens", option)}
                     className={cn(
-                      "rounded-full border-2 px-3 py-2 text-xs font-bold transition",
+                      "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:text-xs",
                       isSelected
                         ? "border-duo-blue bg-duo-blue text-white"
                         : "border-duo-border bg-white text-duo-ink hover:border-duo-blue",
@@ -405,19 +402,19 @@ export function KhutbahForm() {
                   <label
                     key={option}
                     className={cn(
-                      "flex items-center justify-between rounded-xl border-2 px-4 py-3 text-sm font-bold",
+                      "flex items-center justify-between gap-3 rounded-xl border-2 px-4 py-3 text-sm font-extrabold leading-snug",
                       isSelected
                         ? "border-duo-purple bg-duo-purple/10 text-duo-ink"
                         : "border-duo-border bg-white text-duo-ink",
                       errors.bahasa && "border-duo-red"
                     )}
                   >
-                    <span>{option}</span>
+                    <span className="min-w-0 flex-1">{option}</span>
                     <input
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => toggleMulti("bahasa", option)}
-                      className="h-4 w-4 accent-duo-purple"
+                      className="h-4 w-4 shrink-0 accent-duo-purple"
                     />
                   </label>
                 );
@@ -432,21 +429,21 @@ export function KhutbahForm() {
             <div>
               <label className="text-sm font-bold text-duo-ink">Ayat & Hadits Otomatis</label>
               <div className="mt-3 space-y-2">
-                <label className="flex items-center gap-2 text-sm font-semibold text-duo-ink">
+                <label className="flex items-start gap-3 text-sm font-bold leading-6 text-duo-ink">
                   <input
                     type="checkbox"
                     checked={form.includeAyat}
                     onChange={(event) => updateForm("includeAyat", event.target.checked)}
-                    className="h-4 w-4 accent-duo-green"
+                    className="mt-1 h-4 w-4 shrink-0 accent-duo-green"
                   />
                   Sertakan ayat Al-Quran yang relevan
                 </label>
-                <label className="flex items-center gap-2 text-sm font-semibold text-duo-ink">
+                <label className="flex items-start gap-3 text-sm font-bold leading-6 text-duo-ink">
                   <input
                     type="checkbox"
                     checked={form.includeHadits}
                     onChange={(event) => updateForm("includeHadits", event.target.checked)}
-                    className="h-4 w-4 accent-duo-green"
+                    className="mt-1 h-4 w-4 shrink-0 accent-duo-green"
                   />
                   Sertakan hadits shahih yang relevan
                 </label>
@@ -463,7 +460,7 @@ export function KhutbahForm() {
                       type="button"
                       onClick={() => updateForm("struktur", option)}
                       className={cn(
-                        "rounded-full border-2 px-3 py-2 text-xs font-bold transition",
+                        "min-h-10 rounded-full border-2 px-3 py-2 text-sm font-extrabold transition sm:min-h-0 sm:text-xs",
                         isSelected
                           ? "border-duo-green bg-duo-green text-white"
                           : "border-duo-border bg-white text-duo-ink hover:border-duo-blue"
@@ -507,7 +504,7 @@ export function KhutbahForm() {
               onChange={(event) => updateForm("catatan", event.target.value)}
               rows={4}
               placeholder="Contoh: Jamaah baru kehilangan orang tersayang, suasana penuh haru..."
-              className="mt-2 w-full rounded-xl border-2 border-duo-border px-4 py-3 text-sm font-semibold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none"
+              className="mt-2 w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold leading-7 text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm"
             />
           </div>
         </div>
@@ -536,7 +533,7 @@ export function KhutbahForm() {
       )}
 
       {history.length > 0 && (
-        <div className="rounded-2xl border-2 border-duo-border bg-white p-6 shadow-[0_2px_0_#E5E5E5]">
+        <div className="rounded-2xl border-2 border-duo-border bg-white p-4 shadow-[0_2px_0_#E5E5E5] sm:p-6">
           <div className="flex items-center gap-2 text-sm font-extrabold text-duo-ink">
             <History className="h-4 w-4" />
             Riwayat 5 Khutbah Terakhir
@@ -547,10 +544,10 @@ export function KhutbahForm() {
                 key={item.id}
                 type="button"
                 onClick={() => handleLoadHistory(item)}
-                className="flex w-full items-center justify-between rounded-xl border-2 border-duo-border px-4 py-3 text-left text-sm font-bold text-duo-ink transition hover:border-duo-blue"
+                className="flex w-full items-center justify-between gap-3 rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-left text-sm font-bold leading-6 text-duo-ink transition hover:border-duo-blue"
               >
-                <span>{item.title}</span>
-                <ChevronDown className="h-4 w-4 text-duo-muted" />
+                <span className="min-w-0 flex-1 break-words">{item.title}</span>
+                <ChevronDown className="h-4 w-4 shrink-0 text-duo-muted" />
               </button>
             ))}
           </div>

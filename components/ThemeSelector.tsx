@@ -33,7 +33,7 @@ export function ThemeSelector({
         onChange={(event) => onChange(event.target.value)}
         placeholder="Ketik tema atau pilih rekomendasi"
         className={cn(
-          "w-full rounded-xl border-2 border-duo-border px-4 py-3 text-sm font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none",
+          "w-full rounded-xl border-2 border-duo-border bg-white px-4 py-3 text-base font-bold text-duo-ink placeholder:text-duo-muted focus:border-duo-blue focus:outline-none sm:text-sm",
           hasError && "border-duo-red"
         )}
       />
@@ -47,7 +47,7 @@ export function ThemeSelector({
                 type="button"
                 onClick={() => onChange(theme)}
                 className={cn(
-                  "rounded-full border-2 px-3 py-1 text-xs font-bold transition",
+                  "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:py-1 sm:text-xs",
                   isSelected
                     ? "border-duo-blue bg-duo-blue text-white"
                     : "border-duo-border bg-white text-duo-ink hover:border-duo-blue"

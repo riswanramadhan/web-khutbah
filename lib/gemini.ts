@@ -47,13 +47,29 @@ export function buildPrompt(input: GeminiInput) {
 Output dalam format JSON dengan struktur:
 {
   "judul": "...",
+  "outline": {
+    "pembukaan": "...",
+    "poinUtama": ["Poin utama 1", "Poin utama 2", "Poin utama 3"],
+    "penutup": "..."
+  },
   "naskah": "... (markdown)",
   "poinUtama": ["...", "...", "..."],
   "ayatDanHadits": [{"teks": "...", "sumber": "...", "terjemahan": "..."}],
+  "kisahPendukung": ["...", "..."],
+  "ringkasan": "... (markdown, versi satu halaman untuk panduan cepat)",
+  "evaluasi": {
+    "kekuatanPembukaan": number 1-100,
+    "kesesuaianAudiens": number 1-100,
+    "keseimbanganDalil": number 1-100,
+    "keterhubunganPesan": number 1-100,
+    "kekuatanPenutup": number 1-100,
+    "saranPerbaikan": ["...", "..."]
+  },
   "tipsPenyampaian": ["...", "..."],
   "estimasiMenit": number
 }
 
+Pastikan ayat dan hadits memiliki sumber yang jelas. Jika tidak yakin, tulis ketidakpastian pada sumber dan jangan mengarang.
 PENTING: Return ONLY valid JSON, no markdown fences, no extra text.`;
 }
 

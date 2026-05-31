@@ -3,6 +3,11 @@ import { callGemini, type GeminiInput } from "@/lib/gemini";
 
 export type GeminiOutput = {
   judul: string;
+  outline: {
+    pembukaan: string;
+    poinUtama: string[];
+    penutup: string;
+  };
   naskah: string;
   poinUtama: string[];
   ayatDanHadits: Array<{
@@ -10,6 +15,16 @@ export type GeminiOutput = {
     sumber: string;
     terjemahan: string;
   }>;
+  kisahPendukung: string[];
+  ringkasan: string;
+  evaluasi: {
+    kekuatanPembukaan: number;
+    kesesuaianAudiens: number;
+    keseimbanganDalil: number;
+    keterhubunganPesan: number;
+    kekuatanPenutup: number;
+    saranPerbaikan: string[];
+  };
   tipsPenyampaian: string[];
   estimasiMenit: number;
 };
