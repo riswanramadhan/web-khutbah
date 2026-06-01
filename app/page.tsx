@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { KhutbahForm } from "@/components/KhutbahForm";
 
 function HighlightWords({ text, className = "" }: { text: string; className?: string }) {
@@ -37,18 +38,20 @@ export default function Page() {
             </div>
           </div>
           <div className="border-t-2 border-ink-deep bg-[#123b2a] p-5 text-white md:border-l-2 md:border-t-0 sm:p-8">
-            <div className="flex h-full min-h-64 flex-col justify-between gap-8">
-              <div>
-                <p className="font-accent text-sm font-extrabold uppercase text-duo-yellow">Quick Start</p>
-                <h2 className="mt-3 font-display text-3xl font-black leading-tight">
-                  Fokus pada pesan, bukan form yang bikin pening.
-                </h2>
+            <div className="flex h-full min-h-72 flex-col justify-end gap-5">
+              <div className="relative mx-auto aspect-[4/5] w-full max-w-[19rem] overflow-hidden rounded-[1.5rem] border-2 border-ink-deep bg-mint-soft shadow-[0_6px_0_#25231f]">
+                <Image
+                  src="/kanda-bahlil.png"
+                  alt="Kanda Bahlil"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 82vw, 320px"
+                  className="object-cover"
+                />
               </div>
-              <div className="grid gap-3 font-accent text-sm font-bold leading-6">
-                <div className="rounded-2xl bg-white/10 p-4">1. Pilih acara, audiens, dan gaya bicara.</div>
-                <div className="rounded-2xl bg-white/10 p-4">2. Geser kedalaman sesuai kebutuhan kajian.</div>
-                <div className="rounded-2xl bg-white/10 p-4">3. Generate, evaluasi, lalu pakai hasilnya.</div>
-              </div>
+              <blockquote className="rounded-[1.25rem] border-2 border-ink-deep bg-white px-4 py-3 text-center font-display text-xl font-black leading-tight text-ink-deep shadow-[0_4px_0_#25231f] sm:text-2xl">
+                &quot;Setiap yang bernyawa pasti akan merasakan MBG&quot;
+              </blockquote>
             </div>
           </div>
         </div>

@@ -8,6 +8,7 @@ type ThemeSelectorProps = {
   jenisAcara: string;
   value: string;
   onChange: (value: string) => void;
+  onPick?: (value: string, index: number) => void;
   hasError?: boolean;
 };
 
@@ -15,6 +16,7 @@ export function ThemeSelector({
   jenisAcara,
   value,
   onChange,
+  onPick,
   hasError
 }: ThemeSelectorProps) {
   const recommendedThemes = useMemo(() => {
@@ -39,13 +41,13 @@ export function ThemeSelector({
       />
       {jenisAcara ? (
         <div className="flex flex-wrap gap-2">
-          {recommendedThemes.map((theme) => {
+          {recommendedThemes.map((theme, index) => {
             const isSelected = value === theme;
             return (
               <button
                 key={theme}
                 type="button"
-                onClick={() => onChange(theme)}
+                onClick={() => (onPick ? onPick(theme, index) : onChange(theme))}
                 className={cn(
                   "min-h-10 rounded-full border-2 px-3 py-2 text-left text-sm font-extrabold leading-snug transition sm:min-h-0 sm:py-1 sm:text-xs",
                   isSelected

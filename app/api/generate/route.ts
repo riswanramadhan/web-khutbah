@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { callGemini, type GeminiInput } from "@/lib/gemini";
+import { GeminiServiceError, callGemini, type GeminiInput } from "@/lib/gemini";
 
 export type GeminiOutput = {
   judul: string;
@@ -49,9 +49,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ data: parsed });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
+    const status = error instanceof GeminiServiceError ? error.status : 500;
+
     return NextResponse.json(
       { error: "Gemini request failed", detail: message },
-      { status: 500 }
+      { status }
     );
   }
 }

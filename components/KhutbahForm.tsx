@@ -9,6 +9,12 @@ import { CtaButton } from "./CtaButton";
 import { cn, estimateWordCount, formatDuration } from "@/lib/utils";
 import type { GeminiOutput } from "@/app/api/generate/route";
 
+declare global {
+  interface Window {
+    webkitAudioContext?: typeof AudioContext;
+  }
+}
+
 const jenisAcaraOptions = [
   "Khutbah Jum'at",
   "Khutbah Idul Fitri",
@@ -70,6 +76,8 @@ const kedalamanCopy = {
   Advanced: "Mendalam, bernuansa ilmiah, dan kaya penguatan dalil."
 } satisfies Record<(typeof kedalamanOptions)[number], string>;
 
+type ClickVariant = 0 | 1;
+
 type FormState = {
   namaPenceramah: string;
   tempat: string;
@@ -106,6 +114,34 @@ function HighlightLabel({ text }: { text: string }) {
   );
 }
 
+function playCuteClick(variant: ClickVariant) {
+  if (typeof window === "undefined") return;
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+
+  const context = new AudioContextClass();
+  const oscillator = context.createOscillator();
+  const gain = context.createGain();
+  const now = context.currentTime;
+
+  oscillator.type = variant === 0 ? "sine" : "triangle";
+  oscillator.frequency.setValueAtTime(variant === 0 ? 520 : 680, now);
+  oscillator.frequency.exponentialRampToValueAtTime(variant === 0 ? 860 : 430, now + 0.08);
+
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(variant === 0 ? 0.08 : 0.06, now + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
+
+  oscillator.connect(gain);
+  gain.connect(context.destination);
+  oscillator.onended = () => {
+    void context.close();
+  };
+  oscillator.start(now);
+  oscillator.stop(now + 0.14);
+}
+
 const initialState: FormState = {
   namaPenceramah: "",
   tempat: "",
@@ -124,6 +160,7 @@ const initialState: FormState = {
 
 export function KhutbahForm() {
   const [form, setForm] = useState<FormState>(initialState);
+  const [depthPosition, setDepthPosition] = useState(0);
   const [errors, setErrors] = useState<Record<string, boolean>>({});
   const [shakeField, setShakeField] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -143,13 +180,36 @@ export function KhutbahForm() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const toggleMulti = (key: "gayaBahasa" | "audiens" | "bahasa", value: string) => {
+  const updateFormWithSound = (
+    key: keyof FormState,
+    value: FormState[keyof FormState],
+    variant: ClickVariant
+  ) => {
+    playCuteClick(variant);
+    updateForm(key, value);
+  };
+
+  const toggleMulti = (
+    key: "gayaBahasa" | "audiens" | "bahasa",
+    value: string,
+    variant: ClickVariant
+  ) => {
+    playCuteClick(variant);
     setForm((prev) => {
       const current = prev[key];
       const exists = current.includes(value);
       const next = exists ? current.filter((item) => item !== value) : [...current, value];
       return { ...prev, [key]: next } as FormState;
     });
+  };
+
+  const updateDepthPosition = (position: number, variant?: ClickVariant) => {
+    if (variant !== undefined) playCuteClick(variant);
+
+    const clampedPosition = Math.min(200, Math.max(0, position));
+    const depthIndex = Math.round(clampedPosition / 100);
+    setDepthPosition(clampedPosition);
+    updateForm("kedalaman", kedalamanOptions[depthIndex]);
   };
 
   const validate = () => {
@@ -260,6 +320,7 @@ export function KhutbahForm() {
 
   const handleLoadHistory = (item: HistoryItem) => {
     setForm(item.payload);
+    setDepthPosition(kedalamanOptions.indexOf(item.payload.kedalaman) * 100);
     setResult(item.result);
   };
 
@@ -296,13 +357,13 @@ export function KhutbahForm() {
           <div id="field-jenisAcara" className={cn("mt-6", shakeField === "jenisAcara" && "animate-shake")}>
             <label><HighlightLabel text="Jenis Acara" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
-              {jenisAcaraOptions.map((option) => {
+              {jenisAcaraOptions.map((option, index) => {
                 const isSelected = form.jenisAcara === option;
                 return (
                   <button
                     key={option}
                     type="button"
-                    onClick={() => updateForm("jenisAcara", option)}
+                    onClick={() => updateFormWithSound("jenisAcara", option, (index % 2) as ClickVariant)}
                     className={cn(
                       "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 text-left font-accent text-sm font-extrabold leading-snug shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
@@ -325,6 +386,7 @@ export function KhutbahForm() {
                 jenisAcara={form.jenisAcara}
                 value={form.tema}
                 onChange={(value) => updateForm("tema", value)}
+                onPick={(value, index) => updateFormWithSound("tema", value, (index % 2) as ClickVariant)}
                 hasError={errors.tema}
               />
             </div>
@@ -333,13 +395,13 @@ export function KhutbahForm() {
           <div id="field-durasi" className={cn("mt-6", shakeField === "durasi" && "animate-shake")}>
             <label><HighlightLabel text="Durasi Ceramah" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
-              {durasiOptions.map((minutes) => {
+              {durasiOptions.map((minutes, index) => {
                 const isSelected = form.durasi === minutes;
                 return (
                   <button
                     key={minutes}
                     type="button"
-                    onClick={() => updateForm("durasi", minutes)}
+                    onClick={() => updateFormWithSound("durasi", minutes, (index % 2) as ClickVariant)}
                     className={cn(
                       "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 font-accent text-sm font-extrabold shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
@@ -361,13 +423,13 @@ export function KhutbahForm() {
           <div id="field-gayaBahasa" className={cn("mt-6", shakeField === "gayaBahasa" && "animate-shake")}>
             <label><HighlightLabel text="Gaya Bahasa" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
-              {gayaBahasaOptions.map((option) => {
+              {gayaBahasaOptions.map((option, index) => {
                 const isSelected = form.gayaBahasa.includes(option);
                 return (
                   <button
                     key={option}
                     type="button"
-                    onClick={() => toggleMulti("gayaBahasa", option)}
+                    onClick={() => toggleMulti("gayaBahasa", option, (index % 2) as ClickVariant)}
                     className={cn(
                       "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 text-left font-accent text-sm font-extrabold leading-snug shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
@@ -387,13 +449,13 @@ export function KhutbahForm() {
           <div id="field-audiens" className={cn("mt-6", shakeField === "audiens" && "animate-shake")}>
             <label><HighlightLabel text="Target Audiens" /></label>
             <div className="mt-3 flex flex-wrap gap-2">
-              {audiensOptions.map((option) => {
+              {audiensOptions.map((option, index) => {
                 const isSelected = form.audiens.includes(option);
                 return (
                   <button
                     key={option}
                     type="button"
-                    onClick={() => toggleMulti("audiens", option)}
+                    onClick={() => toggleMulti("audiens", option, (index % 2) as ClickVariant)}
                     className={cn(
                       "min-h-10 rounded-full border-2 border-ink-deep px-3 py-2 text-left font-accent text-sm font-extrabold leading-snug shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                       isSelected
@@ -413,7 +475,7 @@ export function KhutbahForm() {
           <div id="field-bahasa" className={cn("mt-6", shakeField === "bahasa" && "animate-shake")}>
             <label><HighlightLabel text="Pilihan Bahasa" /></label>
             <div className="mt-3 grid gap-3 md:grid-cols-3">
-              {bahasaOptions.map((option) => {
+              {bahasaOptions.map((option, index) => {
                 const isSelected = form.bahasa.includes(option);
                 return (
                   <label
@@ -430,7 +492,7 @@ export function KhutbahForm() {
                     <input
                       type="checkbox"
                       checked={isSelected}
-                      onChange={() => toggleMulti("bahasa", option)}
+                      onChange={() => toggleMulti("bahasa", option, (index % 2) as ClickVariant)}
                       className="h-4 w-4 shrink-0 accent-duo-purple"
                     />
                   </label>
@@ -450,7 +512,7 @@ export function KhutbahForm() {
                   <input
                     type="checkbox"
                     checked={form.includeAyat}
-                    onChange={(event) => updateForm("includeAyat", event.target.checked)}
+                    onChange={(event) => updateFormWithSound("includeAyat", event.target.checked, 0)}
                     className="mt-1 h-4 w-4 shrink-0 accent-duo-green"
                   />
                   Sertakan ayat Al-Quran yang relevan
@@ -459,7 +521,7 @@ export function KhutbahForm() {
                   <input
                     type="checkbox"
                     checked={form.includeHadits}
-                    onChange={(event) => updateForm("includeHadits", event.target.checked)}
+                    onChange={(event) => updateFormWithSound("includeHadits", event.target.checked, 1)}
                     className="mt-1 h-4 w-4 shrink-0 accent-duo-green"
                   />
                   Sertakan hadits shahih yang relevan
@@ -469,13 +531,13 @@ export function KhutbahForm() {
             <div>
               <label><HighlightLabel text="Struktur Khutbah" /></label>
               <div className="mt-3 flex flex-wrap gap-2">
-                {strukturOptions.map((option) => {
+                {strukturOptions.map((option, index) => {
                   const isSelected = form.struktur === option;
                   return (
                     <button
                       key={option}
                       type="button"
-                      onClick={() => updateForm("struktur", option)}
+                      onClick={() => updateFormWithSound("struktur", option, (index % 2) as ClickVariant)}
                       className={cn(
                         "min-h-10 rounded-full border-2 border-ink-deep px-4 py-2 font-accent text-sm font-extrabold shadow-[0_2px_0_#25231f] transition sm:min-h-0 sm:text-xs",
                         isSelected
@@ -510,22 +572,21 @@ export function KhutbahForm() {
               <input
                 type="range"
                 min={0}
-                max={2}
+                max={200}
                 step={1}
-                value={kedalamanOptions.indexOf(form.kedalaman)}
+                value={depthPosition}
                 aria-label="Tingkat Kedalaman"
                 onChange={(event) => {
-                  const index = Number(event.target.value);
-                  updateForm("kedalaman", kedalamanOptions[index]);
+                  updateDepthPosition(Number(event.target.value));
                 }}
                 className="depth-slider mt-5"
               />
               <div className="grid grid-cols-3 gap-2 font-accent text-[0.7rem] font-extrabold uppercase text-ink-deep sm:text-xs">
-                {kedalamanOptions.map((option) => (
+                {kedalamanOptions.map((option, index) => (
                   <button
                     key={option}
                     type="button"
-                    onClick={() => updateForm("kedalaman", option)}
+                    onClick={() => updateDepthPosition(index * 100, (index % 2) as ClickVariant)}
                     className={cn(
                       "rounded-full border-2 border-ink-deep px-2 py-2 shadow-[0_2px_0_#25231f]",
                       form.kedalaman === option ? "bg-duo-yellow" : "bg-white"
