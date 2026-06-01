@@ -20,7 +20,7 @@ export default function Page() {
         <div className="grid gap-0 md:grid-cols-[1.28fr_0.72fr] md:items-stretch">
           <div className="p-5 sm:p-8 lg:p-10">
             <div className="mb-5 inline-flex rounded-full border-2 border-ink-deep bg-mint-soft px-4 py-2 font-accent text-xs font-extrabold uppercase text-ink-deep shadow-[0_3px_0_#25231f]">
-              Asisten ceramah cepat, rapi, dan bernuansa lokal
+              Developed by Riswan Ramadhan
             </div>
             <h1 className="font-display text-4xl font-black leading-[0.95] text-ink-deep sm:text-6xl">
               <HighlightWords text="Khutbah Berkualitas" />
@@ -33,7 +33,7 @@ export default function Page() {
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <a href="#khutbah-form" className="inline-flex w-full items-center justify-center rounded-2xl border-2 border-ink-deep bg-duo-green px-6 py-4 text-center font-accent font-extrabold text-white shadow-[0_5px_0_#25231f] transition-transform active:translate-y-1 active:shadow-none sm:w-auto">Mulai Buat Khutbah -&gt;</a>
               <div className="rounded-full border-2 border-ink-deep bg-sun-soft px-4 py-2 font-accent text-sm font-extrabold text-ink-deep">
-                1,234+ khutbah dibuat
+                143+ khutbah dibuat
               </div>
             </div>
           </div>

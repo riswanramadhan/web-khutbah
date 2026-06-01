@@ -23,7 +23,7 @@ export function Navbar() {
       <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4 lg:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           <div className="shrink-0 rounded-2xl border-2 border-ink-deep bg-duo-green px-3 py-2 font-display text-sm font-black text-white shadow-[0_3px_0_#25231f]">
-            KhutbahKit
+            SI ABAH 
           </div>
           {badge && (
             <span className="hidden items-center gap-1 rounded-full border-2 border-ink-deep bg-rose-soft px-3 py-1 font-accent text-xs font-extrabold text-ink-deep sm:flex">
